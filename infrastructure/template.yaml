@@ -1,0 +1,57 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Resources:
+  profileBucketForLambda:
+#    DeletionPolicy : Retain
+    Type : AWS::S3::Bucket
+    Description : Creating Amazon S3 bucket from holding the lambda
+    Properties:
+      BucketName : packagebucket
+      BucketEncryption:
+        ServerSideEncryptionConfiguration :
+          - ServerSideEncryptionByDefault :
+              SSEAlgorithm : AES256
+
+  ProfileManagementLambda:
+    Type: AWS::Lambda::Function
+    DependsOn:
+    - profileBucketForLambda
+    - LambdaS3Role
+    Properties:
+      FunctionName: profilemngmt
+      Handler: profile.lambda_handler
+      PackageType: Zip
+      Role: !GetAtt LambdaS3Role.Arn
+      Runtime: python3.8
+      Code:
+        S3Bucket: packagebucket
+        S3Key: mypackage.zip
+
+  LambdaS3Role:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: 'profilerole'
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: 'sts:AssumeRole'
+            Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      Policies:
+        - PolicyName: 's3_policy'
+          PolicyDocument:
+            Statement :
+              - Effect: Allow
+                Action:
+                  - 's3:*'
+                Resource : 'arn:aws-cn:s3:::packagebucket'
+        - PolicyName: MyLambdaPolicy
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource : "arn:aws-cn:logs:cn-northwest-1:803468271100:log-group:/aws/lambda/*:*:*"
