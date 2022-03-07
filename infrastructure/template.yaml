@@ -55,3 +55,36 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                 Resource : "arn:aws-cn:logs:cn-northwest-1:803468271100:log-group:/aws/lambda/*:*:*"
+
+  ProfileManagementBucket:
+#    DeletionPolicy : Retain
+    Type : AWS::S3::Bucket
+    Description : Creating Amazon S3 bucket from CloudFormation
+    Properties:
+      BucketName : csv-profile-management
+      NotificationConfiguration:
+        LambdaConfigurations:
+          - Event: s3:ObjectCreated:Put
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: suffix
+                    Value: csv
+            Function: !GetAtt [ProfileManagementLambda, Arn]
+      BucketEncryption:
+        ServerSideEncryptionConfiguration :
+          - ServerSideEncryptionByDefault :
+              SSEAlgorithm : AES256
+
+  PermissionForS3ToInvokeLambda:
+    Type: AWS::Lambda::Permission
+    DependsOn: ProfileManagementLambda
+    Properties:
+      FunctionName:
+        Fn::GetAtt:
+          - ProfileManagementLambda
+          - Arn
+      Action: lambda:InvokeFunction
+      Principal: s3.amazonaws.com
+      SourceArn:
+        Fn::Sub: arn:aws-cn:s3:::csv-profile-management
