@@ -1,7 +1,8 @@
+from unittest import TestCase
+
 import boto3
 import moto
 
-from unittest import TestCase
 from src.profile_dao import put_item
 
 
@@ -58,4 +59,3 @@ class ProfileDaoTest(TestCase):
         status_code = response['ResponseMetadata']['HTTPStatusCode']
         print(status_code)
         self.assertEqual(200, status_code)
-
