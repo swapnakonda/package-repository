@@ -1,3 +1,4 @@
 boto3
 regex
-^[6-9]\d{9}$
+moto
+pytest

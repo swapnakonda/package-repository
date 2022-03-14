@@ -1,0 +1,19 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Resources:
+  PackageBucketForLambda:
+#    DeletionPolicy : Retain
+    Type : AWS::S3::Bucket
+    Description : Creating Amazon S3 bucket from holding the lambda
+    Properties:
+      BucketName : packagebucket
+      BucketEncryption:
+        ServerSideEncryptionConfiguration :
+          - ServerSideEncryptionByDefault :
+              SSEAlgorithm : AES256
+Outputs:
+  BucketName:
+    Value: !Ref PackageBucketForLambda
+    Description: 'this is used by lambda'
+    Export:
+      Name: packagebucket-export
