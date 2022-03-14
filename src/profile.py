@@ -1,24 +1,20 @@
 import csv
-
 import boto3
+
+from profile_business import profile_operations
 
 
 def lambda_handler(event, context):
-    print('')
-    # Read the data from S3
+    print(f'event - {event}')
+    print('event key object -', event['Records'][0]['s3']['object']['key'])
+    object_key_value: str = event['Records'][0]['s3']['object']['key']
+    bucket_name:str = event['Records'][0]['s3']['bucket']['name']
 
     s3 = boto3.resource('s3')
-    bucket = s3.Bucket('csv-profile-management')
-    obj = s3.get_object(Bucket='csv-profile-management', Key='*.csv')
+    obj = s3.get_object(Bucket=bucket_name, Key=object_key_value)
     data = obj['Body'].read().decode('utf-8').splitlines()
-    records = csv.reader(data)
-    print(records)
-    validate_email_phone(records)
+    records = csv.DictReader(data)
+    profile_operations(records)
 
 
 
-
-def validate_email_phone(records):
-    for row in records:
-
-    #proces the data into dynamo
