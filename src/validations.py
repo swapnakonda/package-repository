@@ -1,14 +1,8 @@
-import re
-
-regex = re.compile(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+')
+from profile_business import profile_validation
 
 
-def validate_email(email: str):
-    return re.fullmatch(regex, email)
-
-
-def validate_phone():
-    pass
+email_validation_response, phone_validation_response = profile_validation()
+print(f"email response - {email_validation_response} phone validation response - {phone_validation_response}")
 
 
 
