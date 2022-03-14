@@ -1,33 +1,22 @@
 AWSTemplateFormatVersion: 2010-09-09
 
 Resources:
-  profileBucketForLambda:
-#    DeletionPolicy : Retain
-    Type : AWS::S3::Bucket
-    Description : Creating Amazon S3 bucket from holding the lambda
-    Properties:
-      BucketName : packagebucket
-      BucketEncryption:
-        ServerSideEncryptionConfiguration :
-          - ServerSideEncryptionByDefault :
-              SSEAlgorithm : AES256
-
   ProfileManagementLambda:
     Type: AWS::Lambda::Function
     DependsOn:
     - profileBucketForLambda
-    - LambdaS3Role
+    - LambdaRole
     Properties:
       FunctionName: profilemngmt
       Handler: profile.lambda_handler
       PackageType: Zip
-      Role: !GetAtt LambdaS3Role.Arn
+      Role: !GetAtt LambdaRole.Arn
       Runtime: python3.8
       Code:
-        S3Bucket: packagebucket
+        S3Bucket: !ImportValue 'packagebucket-export'
         S3Key: mypackage.zip
 
-  LambdaS3Role:
+  LambdaRole:
     Type: AWS::IAM::Role
     Properties:
       RoleName: 'profilerole'
@@ -46,7 +35,7 @@ Resources:
                 Action:
                   - 's3:*'
                 Resource : 'arn:aws-cn:s3:::packagebucket'
-        - PolicyName: MyLambdaPolicy
+        - PolicyName: 'clowdwatch_policy'
           PolicyDocument:
             Statement:
               - Effect: Allow
@@ -54,7 +43,14 @@ Resources:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
-                Resource : "arn:aws-cn:logs:cn-northwest-1:803468271100:log-group:/aws/lambda/*:*:*"
+                Resource: "arn:aws-cn:logs:cn-northwest-1:803468271100:log-group:/aws/lambda/*:*:*"
+        - PolicyName: 'dynamodb_policy'
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'dynamodb:PutItem'
+                Resource: "arn:aws-cn:dynamodb:cn-northwest-1:803468271100:table/Profile"
 
   ProfileManagementBucket:
 #    DeletionPolicy : Retain
