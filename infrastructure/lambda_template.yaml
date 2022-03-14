@@ -4,7 +4,6 @@ Resources:
   ProfileManagementLambda:
     Type: AWS::Lambda::Function
     DependsOn:
-    - profileBucketForLambda
     - LambdaRole
     Properties:
       FunctionName: profilemngmt
