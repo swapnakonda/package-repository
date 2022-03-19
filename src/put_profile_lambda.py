@@ -2,7 +2,7 @@ import csv
 
 import boto3
 
-from src.profile_business import profile_operations
+from src import profile_business
 
 
 def lambda_handler(event, context):
@@ -15,7 +15,7 @@ def lambda_handler(event, context):
     obj = s3.get_object(Bucket=bucket_name, Key=object_key_value)
     data = obj['Body'].read().decode('utf-8').splitlines()
     records = csv.DictReader(data)
-    profile_operations(records)
+    profile_business.profile_operations(records)
     final_response = {
         'status_code': 200,
         'status_message': 'Succesfully processed profile csv'
