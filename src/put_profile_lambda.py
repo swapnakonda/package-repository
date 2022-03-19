@@ -3,7 +3,7 @@ import csv
 import boto3
 
 from src import profile_business
-from src.profile_dao import get_profile
+
 
 def lambda_handler(event, context):
     print(f'event - {event}')
@@ -21,45 +21,3 @@ def lambda_handler(event, context):
         'status_message': 'Succesfully processed profile csv'
     }
     return final_response
-
-
-def lambda_handler_database_update(event, context):
-    event = {
-        "resource": "/",
-        "path": "/",
-        "httpMethod": "GET",
-        "requestContext": {
-            "resourcePath": "/",
-            "httpMethod": "GET",
-            "path": "/Prod/"
-        },
-        "headers": {
-            "accept": "text/html",
-            "accept-encoding": "gzip, deflate, br",
-            "Host": "xxx.us-east-2.amazonaws.com",
-            "User-Agent": "Mozilla/5.0"
-        },
-        "multiValueHeaders": {
-            "accept": [
-                "json"
-            ],
-            "accept-encoding": [
-                "gzip, deflate, br"
-            ],
-
-        },
-        "queryStringParameters": {
-            "postcode": 12345,
-            "email": "jeorge.mike@cogni.com"
-        },
-
-    }
-
-
-    email_value = event["queryStringParameters"]["email"]
-
-    #BusinessLayer
-    profile_business.get_profile_based_on_email(email_value)
-
-
-

@@ -1,7 +1,7 @@
 import boto3
 
 
-def put_item(row):
+def upload(row):
     dynamodb = boto3.resource('dynamodb', region_name='cn-northwest-1')
     table_obj = dynamodb.Table('Profile')
     response = table_obj.put_item(
@@ -18,4 +18,14 @@ def put_item(row):
         }
     )
     print(f'response from put_item:-{response}')
+    return response
+
+
+def get_profile(email):
+    dynamodb_obj = boto3.resource('dynamodb', region_name='cn-northwest-1')
+    table = dynamodb_obj.Table('Profile')
+    response = table.get_item(
+        Key={
+            'email': email
+        })
     return response
