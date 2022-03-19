@@ -7,7 +7,21 @@ Resources:
     - LambdaRole
     Properties:
       FunctionName: profilemngmt
-      Handler: profile.lambda_handler
+      Handler: put_profile_lambda.lambda_handler
+      PackageType: Zipss
+      Role: !GetAtt LambdaRole.Arn
+      Runtime: python3.8
+      Code:
+        S3Bucket: !ImportValue 'packagebucket-export'
+        S3Key: mypackage.zip
+
+  GetProfileLambda:
+    Type: AWS::Lambda::Function
+    DependsOn:
+    - LambdaRole
+    Properties:
+      FunctionName: getprofile
+      Handler: get_profile_lambda.lambda_handler
       PackageType: Zip
       Role: !GetAtt LambdaRole.Arn
       Runtime: python3.8
