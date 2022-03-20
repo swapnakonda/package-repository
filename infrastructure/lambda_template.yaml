@@ -1,5 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
 
+# lambda function to put the profiles
 Resources:
   ProfileManagementLambda:
     Type: AWS::Lambda::Function
@@ -15,6 +16,7 @@ Resources:
         S3Bucket: !ImportValue 'packagebucket-export'
         S3Key: mypackage.zip
 
+# lambda function to get the profiles with gateway
   GetProfileLambda:
     Type: AWS::Lambda::Function
     DependsOn:
@@ -29,6 +31,7 @@ Resources:
         S3Bucket: !ImportValue 'packagebucket-export'
         S3Key: mypackage.zip
 
+# creating roles with policies of cloudwatch for lambda
   LambdaRole:
     Type: AWS::IAM::Role
     Properties:
@@ -65,6 +68,7 @@ Resources:
                   - 'dynamodb:PutItem'
                 Resource: "arn:aws-cn:dynamodb:cn-northwest-1:803468271100:table/Profile"
 
+# s3 for holding dropped csv files by user
   ProfileManagementBucket:
 #    DeletionPolicy : Retain
     Type : AWS::S3::Bucket
@@ -85,6 +89,7 @@ Resources:
           - ServerSideEncryptionByDefault :
               SSEAlgorithm : AES256
 
+# giving permission for lambda to invoke from s3
   PermissionForS3ToInvokeLambda:
     Type: AWS::Lambda::Permission
     DependsOn: ProfileManagementLambda
