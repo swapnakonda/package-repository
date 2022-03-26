@@ -1,6 +1,7 @@
 import boto3
 
 
+
 def upload(row):
     dynamodb = boto3.resource('dynamodb', region_name='cn-northwest-1')
     table_obj = dynamodb.Table('Profile')
@@ -29,3 +30,16 @@ def get_profile(email):
             'email': email
         })
     return response
+
+
+def update_profile(email, url):
+    dynamodb_obj = boto3.resource('dynamodb', region_name='cn-northwest-1')
+    table = dynamodb_obj.Table('Profile')
+    response_update = table.update_item(
+        Key={'email': email},
+        UpdateExpression="set s3url=:u",
+        ExpressionAttributeValues={":u": url},
+        ReturnValues="UPDATED_NEW"
+    )
+    print(f'update profile response - {response_update}')
+    return response_update

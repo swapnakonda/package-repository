@@ -1,0 +1,2 @@
+class EventInputValidationException(Exception):
+    pass
