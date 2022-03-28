@@ -27,7 +27,7 @@ def get_profile_based_on_email(email):
     print('response - ', response)
     if response is None:
         http_response = {
-            'status_code': 200,
+            'status_code': 400,
             'status_messg': f'There is no profile found for email - {email}'
         }
         return http_response
