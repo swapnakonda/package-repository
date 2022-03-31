@@ -1,7 +1,6 @@
 import boto3
 
 
-
 def upload(row):
     dynamodb = boto3.resource('dynamodb', region_name='cn-northwest-1')
     table_obj = dynamodb.Table('Profile')
@@ -15,10 +14,9 @@ def upload(row):
             'phone': row['phone'],
             'address': row['address'],
             'stream': row['stream']
-
         }
     )
-    print(f'response from put_item:-{response}')
+    print(f'profile_dao:response from profile put_item:-{response}')
     return response
 
 

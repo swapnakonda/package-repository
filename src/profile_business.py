@@ -8,18 +8,19 @@ regex_phone = re.compile(r'(^[6-9]\d{9}$)')
 
 def profile_operations(records):
     response_list = []
+    no_of_records_in_csv = 0
     for row in records:
-        print(row['email'])
+        no_of_records_in_csv = no_of_records_in_csv + 1
         email_validation_response = re.fullmatch(regex_email, row['email'])
         phone_validation_response = re.fullmatch(regex_phone, row['phone'])
         if email_validation_response is not None and phone_validation_response is not None:
+            # put item in profile
             response = profile_dao.upload(row)
             response_list.append(response)
         else:
             print("alarm")
 
-    return response_list
-
+    return no_of_records_in_csv, response_list
 
 
 def get_profile_based_on_email(email):
@@ -36,4 +37,3 @@ def get_profile_based_on_email(email):
         'status_message': response
     }
     return sent_response
-

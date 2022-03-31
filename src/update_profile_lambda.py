@@ -12,12 +12,19 @@ def construct_response(status_code: int, status_message: str, payload: list):
 
 
 def lambda_handler(event, context):
+    """
+    this lambda deals with updating of table with pdf given
+    :param event: 
+    :param context:
+    :return:
+    """
     # input
     print(f'event - {event}')
     try:
         bucket_name: str = event['Records'][0]['s3']['bucket']['name']
         region: str = event['Records'][0]['awsRegion']
         file_name: str = event['Records'][0]['s3']['object']['key']
+
         # validations
         if bucket_name is None:
             print('bucket name is empty')
