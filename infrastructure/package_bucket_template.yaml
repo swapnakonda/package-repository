@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: This s3 is used to hold lambda for integrating with apigateway
+Description: This s3 is used to hold lambda for integrating with lambda
 
 Resources:
   PackageBucketForLambda:

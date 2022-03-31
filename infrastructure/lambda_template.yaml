@@ -7,9 +7,23 @@ Resources:
     DependsOn:
     - LambdaRole
     Properties:
-      FunctionName: profilemngmt
+      FunctionName: s3-csv-process-lambda
       Handler: put_profile_lambda.lambda_handler
-      PackageType: Zipss
+      PackageType: Zip
+      Role: !GetAtt LambdaRole.Arn
+      Runtime: python3.8
+      Code:
+        S3Bucket: !ImportValue 'packagebucket-export'
+        S3Key: mypackage.zip
+
+  UpdateProfileManagementLambda:
+    Type: AWS::Lambda::Function
+    DependsOn:
+    - LambdaRole
+    Properties:
+      FunctionName: update-profile-lambda
+      Handler: update_profile_lambda.lambda_handler
+      PackageType: Zip
       Role: !GetAtt LambdaRole.Arn
       Runtime: python3.8
       Code:
@@ -22,7 +36,7 @@ Resources:
     DependsOn:
     - LambdaRole
     Properties:
-      FunctionName: getprofile
+      FunctionName: get-profile-lambda
       Handler: get_profile_lambda.lambda_handler
       PackageType: Zip
       Role: !GetAtt LambdaRole.Arn
@@ -50,7 +64,9 @@ Resources:
               - Effect: Allow
                 Action:
                   - 's3:*'
-                Resource : 'arn:aws-cn:s3:::packagebucket'
+                Resource :
+                  - 'arn:aws-cn:s3:::*'
+
         - PolicyName: 'clowdwatch_policy'
           PolicyDocument:
             Statement:
@@ -102,3 +118,10 @@ Resources:
       Principal: s3.amazonaws.com
       SourceArn:
         Fn::Sub: arn:aws-cn:s3:::csv-profile-management
+
+Outputs:
+  GetProfileLambdaArn:
+    Value: !GetAtt GetProfileLambda.Arn
+    Export:
+      Name: get-profile-through-email-lambda
+
